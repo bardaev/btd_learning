@@ -1,0 +1,26 @@
+---
+- name: Host and permisson
+  hosts: aws
+  remote_user: psapp
+  become: true
+
+  vars:
+    create_containers: 1
+    default_container_name: rabbitmq-container
+    default_container_image: rabbitmq
+    default_container_command: sleep 1d
+
+  tasks:
+    - name: Pull default Docker image
+      docker_image:
+        name: "{{ default_container_image }}"
+   
+    - name: Create container
+      docker_container:
+        name: "{{ default_container_name }}"
+        image: "{{ default_container_image }}"
+        command: "{{ default_container_command }}"
+        state: started
+      with_sequence: count={{ create_containers }}
+
+
